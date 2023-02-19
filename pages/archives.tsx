@@ -1,37 +1,39 @@
 import Head from "next/head";
+import Link from "next/link";
 import Layout from "../components/layout";
 import { GetStaticProps } from "next";
 import { siteTitle } from "../lib/config";
-import { getArchive } from "../lib/archive";
-import Link from "next/link";
+import { getArchives } from "../lib/posts";
+import { Fragment } from "react";
 
-export default function Home({ archiveData }: { archiveData: ReturnType<typeof getArchive> }) {
+export const getStaticProps: GetStaticProps = async () => {
+    return {
+        props: {
+            archives: getArchives(),
+        },
+    };
+};
+
+export default function Home({ archives }: { archives: ReturnType<typeof getArchives> }) {
     return (
         <Layout>
             <Head>
                 <title>{`${siteTitle} - archive`}</title>
             </Head>
             <section>
-                {archiveData.map(({ year, posts }) => (
-                    <>
+                {archives.map(({ year, posts }) => (
+                    <Fragment key={year}>
                         <h2>{year}</h2>
-
-                        {posts.map((post) => (
-                            <Link href={`/posts/${post.id}`}>
-                                <li>{post.title}</li>
-                            </Link>
-                        ))}
-                    </>
+                        <ul>
+                            {posts.map((post) => (
+                                <Link key={post.id} href={`/posts/${post.id}`}>
+                                    <li>{post.title}</li>
+                                </Link>
+                            ))}
+                        </ul>
+                    </Fragment>
                 ))}
             </section>
         </Layout>
     );
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-    return {
-        props: {
-            archiveData: getArchive(),
-        },
-    };
-};

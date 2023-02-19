@@ -30,15 +30,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="container">
                 <Head>
                     <link rel="icon" href="/favicon.ico" />
-                    <meta name="description" content="Learn how to build a personal website using Next.js" />
+                    <meta name="description" content="A personal website using Next.js" />
                     <meta property="og:image" content={ogImg} />
                     <meta name="og:title" content={siteTitle} />
                     <meta name="twitter:card" content="summary_large_image" />
                 </Head>
                 <header className="pb-8">
-                    <div className="transition hover:scale-105">
-                        <ColCenter>
-                            <Link href="/">
+                    <ColCenter>
+                        <Link href="/">
+                            <div className="transition hover:scale-105">
                                 <Image
                                     priority
                                     src="/images/profile.jpg"
@@ -47,16 +47,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     alt={name}
                                     className="rounded-full"
                                 />
-                                <h1 className="font-mono text-gray-900 no-underline">{name}</h1>
-                            </Link>
-                        </ColCenter>
-                    </div>
-                    <ul className="pt-2 flex gap-2 justify-center items-center">
+                            </div>
+                            <h3 className="font-mono text-gray-900 no-underline">{name}</h3>
+                        </Link>
+                    </ColCenter>
+                    <ul className="list-none pt-2 flex gap-2 justify-center items-center">
                         {[
                             ["Home", "/"],
                             ["Archives", "/archives"],
                         ].map(([name, href]) => (
-                            <li>
+                            <li className="list-none p-1 m-0 text-base underline">
                                 <Link href={href}>{name}</Link>
                             </li>
                         ))}

@@ -3,10 +3,12 @@ import path from "path";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
+import { groupBy } from "lodash";
 
-export interface PostData {
+export interface Post {
     id: string;
     content: string;
+    html: string;
     title: string;
     date: number;
     update?: number;
@@ -14,11 +16,26 @@ export interface PostData {
     categories?: string[];
 }
 
-const postsDirectory = path.join(process.cwd(), "posts");
+export const postsDirectory = path.join(process.cwd(), "posts");
+export const getFileNames = () => fs.readdirSync(postsDirectory).filter((p) => p.endsWith(".md"));
+export const getAllIds = () =>
+    getFileNames().map((f) => ({
+        params: {
+            id: f.replace(/\.md$/, ""),
+        },
+    }));
+export const getAllPosts = () =>
+    getFileNames()
+        .map(getMD)
+        .sort((a, b) => a.date - b.date);
+export const getArchives = () => toArchives(getAllPosts());
+export const getPost = (id: string) => getMD(id + ".md");
 
-function getFileNames() {
-    return fs.readdirSync(postsDirectory);
-}
+/*****************/
+//
+//    utils
+//
+/*****************/
 
 /**
  * parse to timestamp
@@ -49,39 +66,31 @@ function parseMD(m: string): string {
     return md.render(m);
 }
 
-/**
- * this do not parse markdown
- */
-export function getAllPostsData(sort = true) {
-    const fileNames = getFileNames();
-    const allPostsData = fileNames.map((fileName) => getPostData(fileName, false, true));
-    return sort ? allPostsData.sort((a, b) => a.date - b.date) : allPostsData;
-}
-
-export function getAllPostIds() {
-    const fileNames = getFileNames();
-    return fileNames.map((fileName) => ({
-        params: {
-            id: fileName.replace(/\.md$/, ""),
-        },
-    }));
-}
-
-/**
- * simply call `getPostData(id)` with no '.md' suffix is fine
- */
-export function getPostData(idOrPath: string, md2html = true, hasAddSuffix = false) {
-    const id = hasAddSuffix ? idOrPath.replace(/\.md$/, "") : idOrPath;
-    const fullPath = path.join(postsDirectory, `${id}.md`);
+function getMD(filename: string): Post {
+    const fullPath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(fullPath, "utf8");
 
+    const id = filename.replace(/\.md$/, "");
     let { content, data } = matter(fileContents);
     const date = Reflect.has(data, "date") ? parseDate(data.date) : fs.statSync(fullPath).birthtimeMs;
     const update = Reflect.has(data, "update") ? parseDate(data.update) : fs.statSync(fullPath).atimeMs;
     const title = Reflect.has(data, "title") ? data.title : id;
-    if (md2html) content = parseMD(content);
+    const html = parseMD(content);
 
-    const post: PostData = { ...data, id, title, date, update, content };
-
+    const post: Post = { ...data, id, title, date, update, content, html };
     return post;
+}
+
+function toArchives(allPosts: Post[]) {
+    const grouped = groupBy(allPosts, (post) => new Date(post.date).getFullYear());
+    return Object.entries(grouped)
+        .map(([year, posts]) => ({
+            year,
+            posts: posts.map((post) => ({
+                id: post.id,
+                title: post.title,
+                timestamp: post.date,
+            })),
+        }))
+        .sort(({ year: a }, { year: b }) => Number(b) - Number(a));
 }
