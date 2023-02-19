@@ -15,10 +15,11 @@ export default function ({ html }: { html: string }) {
                     padding: 0.5rem 0;
                 }
                 pre {
-                    font-size: 14px;
+                    margin: 2px 0;
+                }
+                pre > .hljs {
                     border-radius: 0.25rem;
-                    overflow: hidden;
-                    margin: 2px;
+                    padding: 1rem;
                 }
             `}</style>
             <div dangerouslySetInnerHTML={{ __html: html }} />

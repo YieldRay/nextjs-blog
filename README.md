@@ -3,5 +3,5 @@
 -   [x] title
 -   [x] date
 -   [] update
--   [] tags
+-   [x] tags
 -   [] cats
