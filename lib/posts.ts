@@ -28,18 +28,18 @@ export const getFileNames = () => fs.readdirSync(postsDirectory).filter((p) => p
 
 export const getIDs = () => getFileNames().map((f) => f.replace(/\.md$/, ""));
 
-export const getPathsForID = () => toParams(getIDs(), "id");
+export const getPathsForID = () => toPaths(getIDs(), "id");
 
 export const getPosts = () =>
     getFileNames()
         .map(getMD)
-        .sort((a, b) => a.date - b.date);
+        .sort((a, b) => b.date - a.date);
 
 export const getArchives = () => toArchives(getPosts());
 
 export const getPost = (id: string) => getMD(id + ".md");
 
-export const getPathsForTag = () => toParams(toTags(getPosts()), "tag");
+export const getPathsForTag = () => toPaths(toTags(getPosts()), "tag");
 
 export const getTags = () => toTags(getPosts());
 
@@ -48,11 +48,11 @@ export const getTag = (tag: string) => findTagFromPosts(getPosts(), tag);
 /**
  * for `getStaticPaths()`
  */
-export function toParams(paths: string[], key: string) {
+export function toPaths<K extends string>(paths: string[], key: K) {
     return paths.map((path) => ({
         params: {
-            [key]: path,
-        },
+            [key as K]: path,
+        } as { K: string },
     }));
 }
 

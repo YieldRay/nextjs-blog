@@ -25,7 +25,10 @@ export default function ({ postsInfo }: { postsInfo: PostInfo[] }) {
     const tagName = asPath.replace("/tags/", "");
     return (
         <Page subtitle={tagName}>
-            <Link href="/tags">[Back]</Link>
+            <Link href="/tags" className="hover:underline">
+                [Back]
+            </Link>
+
             <h2>{tagName}</h2>
             <LinkList list={postsInfo.map(({ id, title }) => ({ href: `/posts/${id}`, name: title }))}></LinkList>
         </Page>

@@ -47,7 +47,7 @@ function Avatar() {
                 <div className="transition duration-500 hover:scale-105">
                     <Image
                         priority
-                        src="/images/profile.jpg"
+                        src="/images/profile.png"
                         height={144}
                         width={144}
                         alt={name}
