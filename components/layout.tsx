@@ -70,15 +70,67 @@ function Nav() {
                 ["Tags", "/tags"],
             ].map(([name, href]) => (
                 <li key={href} className="list-none p-1 m-0">
-                    {router.asPath === href ? (
-                        <span>{name}</span>
-                    ) : (
-                        <Link href={href} className="text-base text-indigo-500 hover:underline">
-                            {name}
-                        </Link>
-                    )}
+                    <Link href={href}>
+                        <Btn active={router.asPath === href}>{name}</Btn>
+                    </Link>
                 </li>
             ))}
         </ul>
+    );
+}
+
+function Btn({ children, active }: any) {
+    // MIT LICENSE
+    // https://uiverse.io/alexmaracinaru/brown-bobcat-65
+    return (
+        <>
+            <button className={`cta ${active ? "active" : ""}`}>
+                <span>{children}</span>
+            </button>
+            <style jsx>{`
+                .cta {
+                    --primary: #234567;
+                    --secondary: #f1f1f1;
+                    position: relative;
+                    margin: auto;
+                    padding: 0.75rem 1rem;
+                    transition: all 0.2s ease;
+                    border: none;
+                    background: none;
+                }
+
+                .cta:before {
+                    --size: 2rem;
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    display: block;
+                    border-radius: 50px;
+                    background: var(--secondary);
+                    width: var(--size);
+                    height: var(--size);
+                    transition: all 0.3s ease;
+                }
+
+                .cta span {
+                    position: relative;
+                    font-family: "Ubuntu", sans-serif;
+                    letter-spacing: 0.05em;
+                    color: var(--primary);
+                }
+
+                .cta.active::before,
+                .cta:hover:before {
+                    width: 100%;
+                    background: var(--secondary);
+                }
+
+                .cta:active {
+                    transform: scale(0.95);
+                }
+            `}</style>
+        </>
     );
 }
