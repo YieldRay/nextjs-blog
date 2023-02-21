@@ -93,21 +93,21 @@ function Btn({ children, active }: any) {
                     --secondary: #f1f1f1;
                     position: relative;
                     margin: auto;
-                    padding: 0.75rem 1rem;
+                    padding: 0.25rem 0.25rem;
                     transition: all 0.2s ease;
                     border: none;
                     background: none;
                 }
 
                 .cta:before {
-                    --size: 2rem;
+                    --size: 1.5rem;
                     content: "";
                     position: absolute;
                     left: 0;
                     top: 50%;
                     transform: translateY(-50%);
                     display: block;
-                    border-radius: 50px;
+                    border-radius: var(--size);
                     background: var(--secondary);
                     width: var(--size);
                     height: var(--size);
@@ -116,7 +116,8 @@ function Btn({ children, active }: any) {
 
                 .cta span {
                     position: relative;
-                    font-family: "Ubuntu", sans-serif;
+                    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+                        Bitstream Vera Sans Mono, Courier New, monospace;
                     letter-spacing: 0.05em;
                     color: var(--primary);
                 }

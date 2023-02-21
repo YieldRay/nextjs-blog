@@ -1,40 +1,38 @@
+import { throttle } from "lodash";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-
-const top = 50; // 50vh
-const screenBoundary = 48; //48rem
-const isMobile = () => globalThis.innerWidth < screenBoundary * 16;
+import { useMediaQuery } from "react-responsive";
 
 export default function ({ html }: { html: string }) {
     const postRef = useRef<HTMLDivElement>(null);
     const [anchors, setAnchors] = useState<JSX.Element>(<></>);
-    useEffect(() => {
-        if (postRef.current) {
-            setAnchors(createAnchors(postRef.current.querySelectorAll("h1,h2,h3,h4,h5,h6,h7")));
-        }
-    }, [postRef]);
+    const isPC = useMediaQuery({ query: "(min-width: 1024px)" });
 
     useEffect(() => {
-        const y = window.innerHeight * (top / 100); //! coresponding to `?vh`
-
-        const onScroll = () => {
-            if (!isMobile()) {
-                const target = document.querySelector(".anchor-container");
-                if (target instanceof HTMLElement) {
-                    const rect = target.getBoundingClientRect();
-                    if (rect.top > 0 || window.scrollY < y) {
-                        target.style.position = "absolute";
-                        target.style.top = "50%";
-                    } else {
-                        target.style.position = "fixed";
-                        target.style.top = "0px";
-                    }
-                }
+        if (!isPC) return;
+        let top: number;
+        const onScroll = throttle(() => {
+            const e = document.querySelector(".post-container > .post-anchor");
+            if (!e || !(e instanceof HTMLElement)) return;
+            if (!top) {
+                const rect = e.getBoundingClientRect();
+                top = window.scrollY + rect.y;
+                return;
             }
-        };
+            if (window.scrollY >= top) {
+                e.classList.add("post-anchor-fixed");
+            } else {
+                e.classList.remove("post-anchor-fixed");
+            }
+        }, 500);
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
-    }, []);
+    });
+
+    useEffect(() => {
+        if (postRef.current) setAnchors(Anchors(postRef.current.querySelectorAll("h1,h2,h3,h4,h5,h6,h7")));
+    }, [postRef]);
+
     return (
         <>
             <style jsx global>{`
@@ -73,30 +71,9 @@ export default function ({ html }: { html: string }) {
                 .post-content h4 a,
                 .post-content h5 a,
                 .post-content h6 a {
-                    color: #333;
+                    color: #66CCFF;
                 }
-
-                .anchor-container {
-                    z-index: 1;
-                    max-height: ${top}vh;
-                    padding: 2rem 0;
-                    width: 6rem;
-                    position: absolute;
-                    top: ${top}vh;
-                    right: 0;
-                }
-
-                @media screen and (max-width: ${screenBoundary}rem) {
-                    .anchor-container {
-                        padding: 0.25rem 1rem;
-                        position: static;
-                        width: 100%;
-                        background-color: #fcfcfc;
-                        border-radius: 0.2rem;
-                        overflow: hidden;
-                        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05), -1px 1px 1px rgba(0, 0, 0, 0.05);
-                    }
-                }
+             
                 .anchor-h {
                     position: relative;
                 }
@@ -116,27 +93,75 @@ export default function ({ html }: { html: string }) {
                     white-space: nowrap;
                     text-overflow: ellipsis;
                 }
+
+                .post-container {
+                    display: flex;
+                    flex-direction: column;
+                    font-size: 0.9rem;
+                }
+
+                .post-anchor {
+                    max-height: 100vh;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                }
+
+
+                @media screen and (min-width: 1024px){
+                    .post-container {
+                        display: block;
+                        position: relative;
+                    }
+
+                    .post-anchor {
+                        width: 6rem;
+                        position: absolute;
+                        right: -8rem;
+                    }
+
+                    .post-anchor-fixed {
+                        position: fixed;
+                        top: 0;
+                        right: 1rem;
+                    }
+                }
+
+                @media screen and (min-width: 1280px){
+                    .post-anchor {
+                        width: 12rem;
+                        right: -16rem;
+                        transition: all 0.4s;
+                    }
+
+                    .post-anchor-fixed {
+                        position: fixed;
+                        top: 1rem;
+                        right: 1rem;
+                    }
+                }
             `}</style>
-            <div className="post-content">
-                {anchors}
-                <div ref={postRef} dangerouslySetInnerHTML={{ __html: html }} />
+            <div className="post-container">
+                <div className="post-anchor">{anchors}</div>
+                <div className="post-content" ref={postRef} dangerouslySetInnerHTML={{ __html: html }} />
             </div>
         </>
     );
 }
 
-function createAnchors(headings: NodeListOf<HTMLHeadingElement>) {
+function Anchors(headings: NodeListOf<HTMLHeadingElement>) {
+    if (headings.length === 0) return <></>;
     return (
         <>
-            <aside className="anchor-container">
-                <details open={!isMobile()}>
+            <aside>
+                <details open>
                     <summary>
                         <strong className="cursor-pointer select-none px-2">目录</strong>
                     </summary>
 
                     {Array.from(headings).map((e) => {
                         const level = Number(e.tagName.slice(1));
-                        const text = (e.textContent ?? "").trim();
+                        let text = (e.textContent ?? "").trim();
+                        if (e.querySelector(".anchor-a")) text = text.replace(/^#+/, ""); //? for DEV
                         const hash = `#${text}`;
                         e.classList.add("anchor-h");
                         e.id = text;
@@ -146,7 +171,7 @@ function createAnchors(headings: NodeListOf<HTMLHeadingElement>) {
                         a.innerHTML = "#";
                         e.prepend(a);
                         return (
-                            <div key={hash} className="ellipsis" style={{ marginLeft: (level - 1) * 14 + "px" }}>
+                            <div key={hash} className="ellipsis" style={{ marginLeft: (level - 1) * 0.35 + "rem" }}>
                                 <Link href={hash}>{text}</Link>
                             </div>
                         );
