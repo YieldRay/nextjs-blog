@@ -1,7 +1,9 @@
-# nextjs-blog-test
+# nextjs-blog
 
--   [x] title
--   [x] date
--   [] update
--   [x] tags
--   [] cats
+the markdown file is compatible with hexo
+
+[x] title
+[x] date
+[] update
+[x] tags
+[] categories

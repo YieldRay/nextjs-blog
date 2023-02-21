@@ -15,6 +15,7 @@ export interface Post {
     tags?: string[];
     categories?: string[];
 }
+export type PostMeta = Omit<Post, "content" | "html">;
 
 export interface PostInfo {
     id: string;
@@ -32,18 +33,23 @@ export const getPathsForID = () => toPaths(getIDs(), "id");
 
 export const getPosts = () =>
     getFileNames()
-        .map(getMD)
+        .map((f) => getMD(f))
         .sort((a, b) => b.date - a.date);
 
-export const getArchives = () => toArchives(getPosts());
+export const getPostsMeta = () =>
+    getFileNames()
+        .map((f) => getMD(f, true))
+        .sort((a, b) => b.date - a.date);
+
+export const getArchives = () => toArchives(getPostsMeta());
 
 export const getPost = (id: string) => getMD(id + ".md");
 
-export const getPathsForTag = () => toPaths(toTags(getPosts()), "tag");
+export const getPathsForTag = () => toPaths(toTags(getPostsMeta()), "tag");
 
-export const getTags = () => toTags(getPosts());
+export const getTags = () => toTags(getPostsMeta());
 
-export const getTag = (tag: string) => findTagFromPosts(getPosts(), tag);
+export const getTag = (tag: string) => findTagFromPosts(getPostsMeta(), tag);
 
 /**
  * for `getStaticPaths()`
@@ -83,7 +89,9 @@ function parseMD(m: string): string {
     return md.render(m);
 }
 
-function getMD(filename: string): Post {
+function getMD(filename: string): Post;
+function getMD(filename: string, metaOnly: true): PostMeta;
+function getMD(filename: string, metaOnly = false): Post | PostMeta {
     const fullPath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(fullPath, "utf8");
 
@@ -92,13 +100,16 @@ function getMD(filename: string): Post {
     const date = Reflect.has(data, "date") ? parseDate(data.date) : fs.statSync(fullPath).birthtimeMs;
     const update = Reflect.has(data, "update") ? parseDate(data.update) : fs.statSync(fullPath).atimeMs;
     const title = Reflect.has(data, "title") ? data.title : id;
-    const html = parseMD(content);
 
-    const post: Post = { ...data, id, title, date, update, content, html };
-    return post;
+    if (metaOnly) {
+        return { ...data, id, title, date, update } as PostMeta;
+    } else {
+        const html = parseMD(content);
+        return { ...data, id, title, date, update, content, html } as Post;
+    }
 }
 
-function post2info({ id, title, date }: Post): PostInfo {
+function post2info({ id, title, date }: PostMeta): PostInfo {
     return {
         id,
         title,
@@ -106,7 +117,7 @@ function post2info({ id, title, date }: Post): PostInfo {
     };
 }
 
-function toArchives(allPosts: Post[]): Array<{ year: string; posts: PostInfo[] }> {
+function toArchives(allPosts: PostMeta[]): Array<{ year: string; posts: PostInfo[] }> {
     const grouped = groupBy(allPosts, (post) => new Date(post.date).getFullYear());
     return Object.entries(grouped)
         .map(([year, posts]) => ({
@@ -116,10 +127,10 @@ function toArchives(allPosts: Post[]): Array<{ year: string; posts: PostInfo[] }
         .sort(({ year: a }, { year: b }) => Number(b) - Number(a));
 }
 
-function toTags(allPosts: Post[]) {
+function toTags(allPosts: PostMeta[]) {
     return [...new Set((allPosts.filter((p) => p.tags).map((p) => p.tags) as Array<string[]>).flat())];
 }
 
-function findTagFromPosts(allPosts: Post[], tag: string) {
+function findTagFromPosts(allPosts: PostMeta[], tag: string) {
     return allPosts.filter((p) => p.tags?.includes(tag)).map(post2info);
 }

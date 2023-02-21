@@ -13,7 +13,7 @@ export default function ({ html }: { html: string }) {
         let top: number;
         const onScroll = throttle(() => {
             const e = document.querySelector(".post-container > .post-anchor");
-            if (!e || !(e instanceof HTMLElement)) return;
+            if (!(e instanceof HTMLElement)) return;
             if (!top) {
                 const rect = e.getBoundingClientRect();
                 top = window.scrollY + rect.y;
@@ -27,119 +27,133 @@ export default function ({ html }: { html: string }) {
         }, 500);
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
-    });
+    }, [isPC]);
 
     useEffect(() => {
-        if (postRef.current) setAnchors(Anchors(postRef.current.querySelectorAll("h1,h2,h3,h4,h5,h6,h7")));
-    }, [postRef]);
+        if (postRef.current) {
+            setAnchors(Anchors(postRef.current.querySelectorAll("h1,h2,h3,h4,h5,h6,h7"), isPC));
+        }
+    }, [isPC]);
 
     return (
         <>
-            <style jsx global>{`
-                .post-content {
-                    font-size: 95%;
-                }
-                .post-content a:hover {
-                    text-decoration: underline;
-                }
-                .post-content code {
-                    background-color: #f8f8f8;
-                }
-                .post-content li {
-                    margin: 1rem;
-                    list-style-type: disc;
-                    display: list-item;
-                    text-align: -webkit-match-parent;
-                }
-                .post-content p {
-                    padding: 0.5rem 0;
-                }
-                .post-content pre {
-                    margin: 2px 0;
-                }
-                .post-content pre > code {
-                    background-color: #2d2d2d;
+            <style jsx global>
+                {`
+ .post-content {
+     font-size: 95%;
+}
+ .post-content a:hover {
+     text-decoration: underline;
+}
+ .post-content code {
+     background-color: #f3f3f3;
+     padding: 0.1rem 0.2rem;
+     border-radius: 0.3rem;
+     box-shadow: 1px 2px 1px rgba(0,0,0,0.04), -1px 2px 1px rgba(0,0,0,0.04);
+}
+ .post-content li {
+     margin: 1rem;
+     list-style-type: disc;
+     display: list-item;
+     text-align: -webkit-match-parent;
+}
+ .post-content p {
+     padding: 0.5rem 0;
+}
+ .post-content pre {
+     margin: 2px 0;
+}
+ .post-content pre > code {
+     background-color: #2d2d2d;
+}
+ .post-content pre > .hljs {
+     border-radius: 0.25rem;
+     padding: 1rem;
+}
+ .post-content h1 a, .post-content h2 a, .post-content h3 a, .post-content h4 a, .post-content h5 a, .post-content h6 a {
+     color: #66CCFF;
+}
+.post-content table {
+    --shadow: rgba(0,0,0,0.04);
+     border-collapse: collapse;
+     margin: 0.05em;
+     box-shadow: 0.1em 0.1em 0.05em var(--shadow), -0.1em -0.1em 0.05em var(--shadow);
+}
+.post-content thead {
+     background-color: rgba(0,0,0,0.07);
+}
+.post-content tbody tr {
+     background-color: rgba(0,0,0,0.01);
+}
+.post-content tbody tr:nth-child(2n) {
+    background-color: var(--shadow);
+}
+.post-content td, .post-content th {
+     padding: 0.25em 0.5em;
+}
+ .anchor-h {
+     position: relative;
+}
+ .anchor-a {
+     position: absolute;
+     top:50%: transform: translateY(-50%);
+     left: -1.25rem;
+     transition: all 0.3s;
+     opacity: 0;
+}
+ .anchor-h:hover > .anchor-a {
+     opacity: 1;
+}
+ .ellipsis {
+     overflow: hidden;
+     white-space: nowrap;
+     text-overflow: ellipsis;
+}
+ .post-anchor {
+     max-height: 100vh;
+     max-width: 33.3vw;
+     overflow-x: hidden;
+     overflow-y: auto;
+     position: fixed;
+     top: 0;
+     right: 0;
+     transition: all 0.4s;
+}
+ .post-container {
+     display: flex;
+     flex-direction: column;
+     font-size: 0.9rem;
+}
+ @media screen and (min-width: 1024px){
+     .post-container {
+         display: block;
+         position: relative;
+    }
+     .post-anchor {
+         width: 6rem;
+         position: absolute;
+         right: -8rem;
+    }
+     .post-anchor-fixed {
+         position: fixed;
+         top: 0;
+         right: 1rem;
+    }
+}
+ @media screen and (min-width: 1280px){
+     .post-anchor {
+         width: 12rem;
+         right: -16rem;
+    }
+     .post-anchor-fixed {
+         position: fixed;
+         top: 1rem;
+         right: 1rem;
+    }
+}
 
-                }
-                .post-content pre > .hljs {
-                    border-radius: 0.25rem;
-                    padding: 1rem;
-                }
-                .post-content h1 a,
-                .post-content h2 a,
-                .post-content h3 a,
-                .post-content h4 a,
-                .post-content h5 a,
-                .post-content h6 a {
-                    color: #66CCFF;
-                }
-             
-                .anchor-h {
-                    position: relative;
-                }
-                .anchor-a {
-                    position: absolute;
-                    top:50%:
-                    transform: translateY(-50%);
-                    left: -1.25rem;
-                    transition: all 0.3s;
-                    opacity: 0;
-                }
-                .anchor-h:hover > .anchor-a {
-                    opacity: 1;
-                }
-                .ellipsis {
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                }
-
-                .post-container {
-                    display: flex;
-                    flex-direction: column;
-                    font-size: 0.9rem;
-                }
-
-                .post-anchor {
-                    max-height: 100vh;
-                    overflow-x: hidden;
-                    overflow-y: auto;
-                }
-
-
-                @media screen and (min-width: 1024px){
-                    .post-container {
-                        display: block;
-                        position: relative;
-                    }
-
-                    .post-anchor {
-                        width: 6rem;
-                        position: absolute;
-                        right: -8rem;
-                    }
-
-                    .post-anchor-fixed {
-                        position: fixed;
-                        top: 0;
-                        right: 1rem;
-                    }
-                }
-
-                @media screen and (min-width: 1280px){
-                    .post-anchor {
-                        width: 12rem;
-                        right: -16rem;
-                        transition: all 0.4s;
-                    }
-
-                    .post-anchor-fixed {
-                        position: fixed;
-                        top: 1rem;
-                        right: 1rem;
-                    }
-                }
-            `}</style>
+            `}
+            </style>
             <div className="post-container">
                 <div className="post-anchor">{anchors}</div>
                 <div className="post-content" ref={postRef} dangerouslySetInnerHTML={{ __html: html }} />
@@ -148,12 +162,12 @@ export default function ({ html }: { html: string }) {
     );
 }
 
-function Anchors(headings: NodeListOf<HTMLHeadingElement>) {
+function Anchors(headings: NodeListOf<HTMLHeadingElement>, open = false) {
     if (headings.length === 0) return <></>;
     return (
         <>
             <aside>
-                <details open>
+                <details open={open}>
                     <summary>
                         <strong className="cursor-pointer select-none px-2">目录</strong>
                     </summary>
@@ -171,7 +185,7 @@ function Anchors(headings: NodeListOf<HTMLHeadingElement>) {
                         a.innerHTML = "#";
                         e.prepend(a);
                         return (
-                            <div key={hash} className="ellipsis" style={{ marginLeft: (level - 1) * 0.35 + "rem" }}>
+                            <div key={hash} className="ellipsis" style={{ marginLeft: (level - 1) * 0.5 + "em" }}>
                                 <Link href={hash}>{text}</Link>
                             </div>
                         );

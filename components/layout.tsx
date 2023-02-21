@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ColCenter } from "./utils";
-import { name, siteTitle } from "../lib/config";
+import { name, siteTitle, pages, profileImage, description } from "../lib/config";
 const ogImg = `https://og-image.vercel.app/${encodeURI(
     siteTitle
 )}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`;
@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="container">
                 <Head>
                     <link rel="icon" href="/favicon.ico" />
-                    <meta name="description" content="A personal website using Next.js" />
+                    <meta name="description" content={description} />
                     <meta property="og:image" content={ogImg} />
                     <meta name="og:title" content={siteTitle} />
                     <meta name="twitter:card" content="summary_large_image" />
@@ -45,14 +45,7 @@ function Avatar() {
         <ColCenter>
             <Link href="/">
                 <div className="transition duration-500 hover:scale-105">
-                    <Image
-                        priority
-                        src="/images/profile.png"
-                        height={144}
-                        width={144}
-                        alt={name}
-                        className="rounded-full"
-                    />
+                    <Image priority src={profileImage} height={144} width={144} alt={name} className="rounded-full" />
                 </div>
                 <h3 className="font-mono text-gray-900 no-underline">{name}</h3>
             </Link>
@@ -64,11 +57,7 @@ function Nav() {
     const router = useRouter();
     return (
         <ul className="list-none pt-2 flex gap-2 justify-center items-center">
-            {[
-                ["Home", "/"],
-                ["Archives", "/archives"],
-                ["Tags", "/tags"],
-            ].map(([name, href]) => (
+            {pages.map(([name, href]) => (
                 <li key={href} className="list-none p-1 m-0">
                     <Link href={href}>
                         <Btn active={router.asPath === href}>{name}</Btn>

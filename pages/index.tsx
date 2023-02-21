@@ -1,23 +1,25 @@
 import Link from "next/link";
 import Date from "../components/date";
 import { GetStaticProps } from "next";
-import { getPosts, type Post } from "../lib/posts";
-import { Introduction } from "../lib/config";
+import { getPostsMeta, type PostMeta } from "../lib/posts";
+import { introduction } from "../lib/config";
 import Page from "../components/page";
+
+const Intro = () => introduction;
 
 export const getStaticProps: GetStaticProps = async () => {
     return {
         props: {
-            allPosts: getPosts(),
+            allPosts: getPostsMeta(),
         },
     };
 };
 
-export default function Index({ allPosts }: { allPosts: Post[] }) {
+export default function Index({ allPosts }: { allPosts: PostMeta[] }) {
     return (
         <Page>
             <section className="py-2 text-md">
-                <Introduction />
+                <Intro />
             </section>
 
             <section className="py-2 font-sans">
