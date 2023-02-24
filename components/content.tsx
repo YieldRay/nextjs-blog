@@ -39,120 +39,143 @@ export default function ({ html }: { html: string }) {
         <>
             <style jsx global>
                 {`
- .post-content {
-     font-size: 95%;
-}
- .post-content a:hover {
-     text-decoration: underline;
-}
- .post-content code {
-     background-color: #f3f3f3;
-     padding: 0.1rem 0.2rem;
-     border-radius: 0.3rem;
-     box-shadow: 1px 2px 1px rgba(0,0,0,0.04), -1px 2px 1px rgba(0,0,0,0.04);
-}
- .post-content li {
-     margin: 1rem;
-     list-style-type: disc;
-     display: list-item;
-     text-align: -webkit-match-parent;
-}
- .post-content p {
-     padding: 0.5rem 0;
-}
- .post-content pre {
-     margin: 2px 0;
-}
- .post-content pre > code {
-     background-color: #2d2d2d;
-}
- .post-content pre > .hljs {
-     border-radius: 0.25rem;
-     padding: 1rem;
-}
- .post-content h1 a, .post-content h2 a, .post-content h3 a, .post-content h4 a, .post-content h5 a, .post-content h6 a {
-     color: #66CCFF;
-}
-.post-content table {
-    --shadow: rgba(0,0,0,0.04);
-     border-collapse: collapse;
-     margin: 0.05em;
-     box-shadow: 0.1em 0.1em 0.05em var(--shadow), -0.1em -0.1em 0.05em var(--shadow);
-}
-.post-content thead {
-     background-color: rgba(0,0,0,0.07);
-}
-.post-content tbody tr {
-     background-color: rgba(0,0,0,0.01);
-}
-.post-content tbody tr:nth-child(2n) {
-    background-color: var(--shadow);
-}
-.post-content td, .post-content th {
-     padding: 0.25em 0.5em;
-}
- .anchor-h {
-     position: relative;
-}
- .anchor-a {
-     position: absolute;
-     top:50%: transform: translateY(-50%);
-     left: -1.25rem;
-     transition: all 0.3s;
-     opacity: 0;
-}
- .anchor-h:hover > .anchor-a {
-     opacity: 1;
-}
- .ellipsis {
-     overflow: hidden;
-     white-space: nowrap;
-     text-overflow: ellipsis;
-}
- .post-anchor {
-     max-height: 100vh;
-     max-width: 33.3vw;
-     overflow-x: hidden;
-     overflow-y: auto;
-     position: fixed;
-     top: 0;
-     right: 0;
-     transition: all 0.4s;
-}
- .post-container {
-     display: flex;
-     flex-direction: column;
-     font-size: 0.9rem;
-}
- @media screen and (min-width: 1024px){
-     .post-container {
-         display: block;
-         position: relative;
-    }
-     .post-anchor {
-         width: 6rem;
-         position: absolute;
-         right: -8rem;
-    }
-     .post-anchor-fixed {
-         position: fixed;
-         top: 0;
-         right: 1rem;
-    }
-}
- @media screen and (min-width: 1280px){
-     .post-anchor {
-         width: 12rem;
-         right: -16rem;
-    }
-     .post-anchor-fixed {
-         position: fixed;
-         top: 1rem;
-         right: 1rem;
-    }
-}
+                    .post-content {
+                        font-size: 95%;
+                    }
+                    .post-content a:hover {
+                        text-decoration: underline;
+                    }
+                    .post-content code {
+                        background-color: #f3f3f3;
+                        padding: 0.1rem 0.2rem;
+                        border-radius: 0.3rem;
+                        box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.04), -1px 2px 1px rgba(0, 0, 0, 0.04);
+                    }
+                    .post-content li {
+                        margin: 1rem;
+                        list-style-type: disc;
+                        display: list-item;
+                        text-align: -webkit-match-parent;
+                    }
+                    .post-content p {
+                        padding: 0.5rem 0;
+                    }
+                    .post-content pre {
+                        margin: 2px 0;
+                    }
+                    .post-content pre > code {
+                        background-color: #2d2d2d;
+                    }
+                    .post-content pre > .hljs {
+                        border-radius: 0.25rem;
+                        padding: 1rem;
+                    }
+                    .post-content h1 a,
+                    .post-content h2 a,
+                    .post-content h3 a,
+                    .post-content h4 a,
+                    .post-content h5 a,
+                    .post-content h6 a {
+                        color: #66ccff;
+                    }
+                    .post-content table {
+                        --shadow: rgba(0, 0, 0, 0.04);
+                        border-collapse: collapse;
+                        margin: 0.05em;
+                        box-shadow: 0.1em 0.1em 0.05em var(--shadow), -0.1em -0.1em 0.05em var(--shadow);
+                    }
+                    .post-content thead {
+                        background-color: rgba(0, 0, 0, 0.07);
+                    }
+                    .post-content tbody tr {
+                        background-color: rgba(0, 0, 0, 0.01);
+                    }
+                    .post-content tbody tr:nth-child(2n) {
+                        background-color: var(--shadow);
+                    }
+                    .post-content td,
+                    .post-content th {
+                        padding: 0.25em 0.5em;
+                    }
+                    .post-content blockquote {
+                        border-left-color: #66ccff;
+                        border-left-width: 0.25em;
+                        padding-left: 0.5em;
+                        box-shadow: 1px 0 2px 2px rgba(0, 0, 0, 0.01);
+                    }
 
-            `}
+                    .anchor-h {
+                        position: relative;
+                    }
+                    .anchor-a {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        left: -1rem;
+                        transition: all 0.3s;
+                        opacity: 0;
+                    }
+                    .anchor-h:hover > .anchor-a {
+                        opacity: 1;
+                    }
+                    .ellipsis {
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                    .post-anchor {
+                        max-height: 100vh;
+                        max-width: 33.3vw;
+                        overflow-x: hidden;
+                        overflow-y: auto;
+                        position: fixed;
+                        top: 0;
+                        right: 0;
+                        transition: all 0.4s;
+                        user-select: none;
+                        z-index: 1;
+                    }
+                    .post-container {
+                        display: flex;
+                        flex-direction: column;
+                        font-size: 0.9rem;
+                    }
+                    @media screen and (max-width: 1024px) {
+                        .post-anchor {
+                            background-color: rgba(0, 0, 0, 0.02);
+                            backdrop-filter: blur(2rem);
+                            padding: 0.25rem 0.5rem;
+                            border-bottom-left-radius: 0.5rem;
+                        }
+                    }
+                    @media screen and (min-width: 1024px) {
+                        .post-container {
+                            display: block;
+                            position: relative;
+                        }
+                        .post-anchor {
+                            width: 6rem;
+                            position: absolute;
+                            right: -8rem;
+                        }
+                        .post-anchor-fixed {
+                            position: fixed;
+                            top: 0;
+                            right: 1rem;
+                        }
+                    }
+                    @media screen and (min-width: 1280px) {
+                        .post-anchor {
+                            width: 12rem;
+                            right: -16rem;
+                        }
+                        .post-anchor-fixed {
+                            position: fixed;
+                            top: 1rem;
+                            right: 1rem;
+                        }
+                    }
+                `}
             </style>
             <div className="post-container">
                 <div className="post-anchor">{anchors}</div>

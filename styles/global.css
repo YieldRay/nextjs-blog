@@ -38,6 +38,18 @@
     }
 }
 
+a {
+    @apply no-underline text-blue-500;
+}
+
+html.dark {
+    @apply bg-slate-800 text-gray-300;
+
+    a {
+        @apply text-sky-600;
+    }
+}
+
 html,
 body {
     padding: 0;
@@ -52,12 +64,19 @@ body {
     box-sizing: border-box;
 }
 
-a {
-    color: #0070f3;
-    text-decoration: none;
-}
-
 img {
     max-width: 100%;
     display: block;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-purple-50;
+}
+
+::-webkit-scrollbar {
+    @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-neutral-200 rounded hover:bg-neutral-300;
 }

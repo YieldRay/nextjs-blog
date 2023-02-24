@@ -1,4 +1,4 @@
-import Head  from "next/head";
+import Head from "next/head";
 import { siteTitle } from "../lib/config";
 import Layout from "./layout";
 

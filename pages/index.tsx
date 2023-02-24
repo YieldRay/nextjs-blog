@@ -29,7 +29,7 @@ export default function Index({ allPosts }: { allPosts: PostMeta[] }) {
                         <li key={id}>
                             <Link href={`/posts/${id}`} className="flex flex-col">
                                 <span className="hover:underline">{title}</span>
-                                <small className="text-gray-500">
+                                <small className="text-sm">
                                     <Date timestamp={date} />
                                 </small>
                             </Link>

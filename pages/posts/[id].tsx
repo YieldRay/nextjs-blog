@@ -24,7 +24,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
 };
 
-export default function Post({ post }: { post: Post }) {
+export default function ({ post }: { post: Post }) {
     return (
         <Layout>
             <Head>
@@ -57,17 +57,47 @@ export default function Post({ post }: { post: Post }) {
                 <section className="py-6">
                     <Content html={post.html} />
                 </section>
-            </article>
 
-            <div className="my-4">
-                <Link href="/" className="group flex relative">
+                <BackToHome />
+            </article>
+        </Layout>
+    );
+}
+
+function BackToHome() {
+    return (
+        <div className="my-4">
+            <style jsx>{`
+                .up {
+                    position: relative;
+                }
+                .up::after {
+                    box-sizing: border-box;
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    z-index: -1;
+                    width: 100%;
+                    height: 2px;
+                    background: #66ccff;
+                    transition: height 0.3s;
+                }
+                .up:hover::after {
+                    height: 100%;
+                    padding: 0.5rem;
+                }
+            `}</style>
+
+            <Link href="/" className="group flex relative">
+                <div className="up">
                     <span className="transition -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 absolute -left-4">
                         ←
                     </span>
-                    <span className="underline">Back to home</span>
-                </Link>
-            </div>
-        </Layout>
+                    <span>Back to home</span>
+                </div>
+            </Link>
+        </div>
     );
 }
 

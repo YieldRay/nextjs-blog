@@ -1,15 +1,16 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ColCenter } from "./utils";
 import { name, siteTitle, pages, profileImage, description } from "../lib/config";
+import { useEffect, useState } from "react";
 const ogImg = `https://og-image.vercel.app/${encodeURI(
     siteTitle
 )}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const router = useRouter();
     return (
         <>
             <style jsx>
@@ -47,11 +48,39 @@ function Avatar() {
                 <div className="transition duration-500 hover:scale-105">
                     <Image priority src={profileImage} height={144} width={144} alt={name} className="rounded-full" />
                 </div>
-                <h3 className="font-mono text-gray-900 no-underline">{name}</h3>
+                <h3 className="font-mono text-gray-900 dark:text-gray-300 no-underline">{name}</h3>
             </Link>
         </ColCenter>
     );
 }
+
+const DarkModeBtn = dynamic(
+    () =>
+    // use 'next/dynamic' because we need access 'window'
+        Promise.resolve(function () {
+            const [dark, setDark] = useState(window.localStorage.getItem("dark") === "true");
+            useEffect(() => {
+                if (window.localStorage.getItem("dark") === "true")
+                    document.querySelector("html")!.classList.add("dark");
+            }, []);
+            return (
+                <Btn
+                    active={dark}
+                    onClick={() => {
+                        const to = !document.querySelector("html")!.classList.contains("dark");
+                        document.querySelector("html")!.classList.toggle("dark");
+                        setDark(to);
+                        window.localStorage.setItem("dark", to.toString());
+                    }}
+                >
+                    Darkmode
+                </Btn>
+            );
+        }),
+    {
+        ssr: false,
+    }
+);
 
 function Nav() {
     const router = useRouter();
@@ -64,22 +93,24 @@ function Nav() {
                     </Link>
                 </li>
             ))}
+            <li className="list-none p-1 m-0">
+                <DarkModeBtn />
+            </li>
         </ul>
     );
 }
 
-function Btn({ children, active }: any) {
+function Btn({ children, active, onClick }: any) {
     // MIT LICENSE
     // https://uiverse.io/alexmaracinaru/brown-bobcat-65
     return (
         <>
-            <button className={`cta ${active ? "active" : ""}`}>
+            <button className={`cta ${active ? "active" : ""}`} onClick={onClick}>
                 <span>{children}</span>
             </button>
             <style jsx>{`
                 .cta {
-                    --primary: #234567;
-                    --secondary: #f1f1f1;
+                    --bg: #e0f2fe;
                     position: relative;
                     margin: auto;
                     padding: 0.25rem 0.25rem;
@@ -97,7 +128,7 @@ function Btn({ children, active }: any) {
                     transform: translateY(-50%);
                     display: block;
                     border-radius: var(--size);
-                    background: var(--secondary);
+                    background: var(--bg);
                     width: var(--size);
                     height: var(--size);
                     transition: all 0.3s ease;
@@ -108,13 +139,13 @@ function Btn({ children, active }: any) {
                     font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
                         Bitstream Vera Sans Mono, Courier New, monospace;
                     letter-spacing: 0.05em;
-                    color: var(--primary);
+                    background-color: transparent;
+                    color: #374151;
                 }
 
                 .cta.active::before,
                 .cta:hover:before {
                     width: 100%;
-                    background: var(--secondary);
                 }
 
                 .cta:active {
