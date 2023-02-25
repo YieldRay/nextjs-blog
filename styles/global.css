@@ -58,6 +58,7 @@ body {
         Helvetica Neue, sans-serif;
     line-height: 1.6;
     font-size: 18px;
+    transition: color 0.15s, background-color 0.3s;
 }
 
 * {
@@ -74,9 +75,9 @@ img {
 }
 
 ::-webkit-scrollbar {
-    @apply w-2;
+    @apply w-2 h-2;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-200 rounded hover:bg-neutral-300;
+    @apply bg-neutral-400 rounded hover:bg-neutral-500;
 }

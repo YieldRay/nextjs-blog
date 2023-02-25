@@ -51,14 +51,17 @@ export default function ({ html }: { html: string }) {
                         border-radius: 0.3rem;
                         box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.04), -1px 2px 1px rgba(0, 0, 0, 0.04);
                     }
+                    html.dark .post-content code {
+                        background-color: #232323;
+                    }
                     .post-content li {
-                        margin: 1rem;
+                        margin: 0.5rem;
                         list-style-type: disc;
                         display: list-item;
                         text-align: -webkit-match-parent;
                     }
                     .post-content p {
-                        padding: 0.5rem 0;
+                        padding: 0.35rem 0;
                     }
                     .post-content pre {
                         margin: 2px 0;
@@ -82,7 +85,7 @@ export default function ({ html }: { html: string }) {
                         --shadow: rgba(0, 0, 0, 0.04);
                         border-collapse: collapse;
                         margin: 0.05em;
-                        box-shadow: 0.1em 0.1em 0.05em var(--shadow), -0.1em -0.1em 0.05em var(--shadow);
+                        box-shadow: 0.1rem 0.1rem 0.05rem var(--shadow), -0.1rem -0.1rem 0.05rem var(--shadow);
                     }
                     .post-content thead {
                         background-color: rgba(0, 0, 0, 0.07);
@@ -95,13 +98,15 @@ export default function ({ html }: { html: string }) {
                     }
                     .post-content td,
                     .post-content th {
-                        padding: 0.25em 0.5em;
+                        padding: 0.25rem 0.5rem;
                     }
                     .post-content blockquote {
                         border-left-color: #66ccff;
-                        border-left-width: 0.25em;
-                        padding-left: 0.5em;
+                        border-left-width: 0.25rem;
+                        padding-left: 0.5rem;
                         box-shadow: 1px 0 2px 2px rgba(0, 0, 0, 0.01);
+                        font-style: italic;
+                        margin: 0.25rem 0;
                     }
 
                     .anchor-h {

@@ -17,7 +17,7 @@ export function LinkList({
     className?: string;
 }) {
     return (
-        <ul className={row ? "flex flex-row gap-2" : "flex flex-col"}>
+        <ul className={row ? "flex flex-row gap-2 flex-wrap" : "flex flex-col"}>
             {list.map(({ href, name }) => (
                 <li key={href}>
                     <Link href={href}>
